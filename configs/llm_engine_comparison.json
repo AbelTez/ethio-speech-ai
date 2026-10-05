@@ -1,0 +1,32 @@
+{
+  "version": "gemma-engine-v1",
+  "llama_release": "b11146",
+  "llama_commit": "7fe450e19305b828c199d602c23a8337aaa1f03b",
+  "assets": [
+    {
+      "name": "cudart-llama-b11146-bin-ubuntu-cuda-12.8-x64.tar.gz",
+      "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11146/cudart-llama-b11146-bin-ubuntu-cuda-12.8-x64.tar.gz",
+      "sha256": "1466daea60aad1144819e151b2bae19d54556cf1da6c129c4f55a5ded2637c25",
+      "bytes": 594373356
+    },
+    {
+      "name": "llama-b11146-bin-ubuntu-cuda-12.8-x64.tar.gz",
+      "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11146/llama-b11146-bin-ubuntu-cuda-12.8-x64.tar.gz",
+      "sha256": "c2ab9e19838513ff69d1af8d999ad717dd3c7ee4714ac04c7ed5ab9077c50e4e",
+      "bytes": 168920581
+    }
+  ],
+  "gguf": {
+    "repo": "bartowski/google_gemma-4-E4B-it-GGUF",
+    "revision": "029e94146666900b08caf49a3b47b413dfa8ec66",
+    "filename": "google_gemma-4-E4B-it-Q4_K_M.gguf",
+    "sha256": "d35a3aa7a6d47de237fd488bb6f7f3efd62908d828f85a63da0ee93acdbefe9f",
+    "bytes": 5405170144
+  },
+  "context_tokens": 512,
+  "response_tokens": 128,
+  "repeats": 3,
+  "warmup_passes": 2,
+  "seed": 42,
+  "note": "Engine plus quantization/conversion comparison; exact source checkpoint revision of third-party GGUF is unverified. Prompt token IDs must match."
+}

@@ -1,0 +1,111 @@
+{
+  "verified_on": "2026-10-02",
+  "starter": [
+    "hohe",
+    "ethio_amharic"
+  ],
+  "candidates": {
+    "hohe": {
+      "model_id": "snapwre/hohe-asr-amharic",
+      "revision": "7ee83bdcf748694409f412e06f6c6747b44b3212",
+      "backend": "ctc",
+      "dtype": "float32",
+      "license_metadata": "cc-by-4.0",
+      "source": "https://huggingface.co/snapwre/hohe-asr-amharic",
+      "note": "Existing baseline; greedy decoder"
+    },
+    "ethio_amharic": {
+      "model_id": "badrex/Ethio-ASR-amharic",
+      "revision": "edda1ab0af0d3cca4f4a6fd0b17ef3726bcce12a",
+      "backend": "ctc",
+      "dtype": "float32",
+      "license_metadata": "cc-by-4.0",
+      "source": "https://huggingface.co/badrex/Ethio-ASR-amharic",
+      "note": "Amharic-specific w2v-BERT"
+    },
+    "whisper_turbo": {
+      "model_id": "openai/whisper-large-v3-turbo",
+      "revision": "41f01f3fe87f28c78e2fbf8b568835947dd65ed9",
+      "backend": "whisper",
+      "dtype": "float16",
+      "license_metadata": "mit",
+      "source": "https://huggingface.co/openai/whisper-large-v3-turbo",
+      "note": "Optional deferred comparison: distinct from previously tested Whisper Small INT8; prioritize Amharic-specific models."
+    },
+    "ethio_94m": {
+      "model_id": "badrex/Ethio-ASR-multilingual-94M",
+      "revision": "239984107a56955b7fa7490e2df9f49583a60148",
+      "backend": "ctc",
+      "dtype": "float32",
+      "license_metadata": "cc-by-nc-sa-4.0",
+      "source": "https://huggingface.co/badrex/Ethio-ASR-multilingual-94M",
+      "note": "Small model efficiency candidate; NC license"
+    },
+    "ethio_300m": {
+      "model_id": "badrex/Ethio-ASR-multilingual-300M",
+      "revision": "c9ec1e7ba9f52e7a86ced6aa4c16995a5d7d209f",
+      "backend": "ctc",
+      "dtype": "float32",
+      "license_metadata": "cc-by-nc-4.0",
+      "source": "https://huggingface.co/badrex/Ethio-ASR-multilingual-300M",
+      "note": "Intermediate size; NC license"
+    },
+    "ethio_600m": {
+      "model_id": "badrex/Ethio-ASR-multilingual-600M",
+      "revision": "5a099192a8a56f118d3515f70f5f44428fd29730",
+      "backend": "ctc",
+      "dtype": "float32",
+      "license_metadata": "cc-by-4.0",
+      "source": "https://huggingface.co/badrex/Ethio-ASR-multilingual-600M",
+      "note": "Multilingual relative of Hohe"
+    },
+    "ethio_1b": {
+      "model_id": "badrex/Ethio-ASR-multilingual-1B",
+      "revision": "7f6dd43f388cd16bb70f0f3662dbcfcefedc5560",
+      "backend": "ctc",
+      "dtype": "float32",
+      "license_metadata": "cc-by-nc-4.0",
+      "source": "https://huggingface.co/badrex/Ethio-ASR-multilingual-1B",
+      "note": "Larger MMS fine-tune; NC license"
+    },
+    "mms_1b": {
+      "model_id": "facebook/mms-1b-all",
+      "revision": "3d33597edbdaaba14a8e858e2c8caa76e3cec0cd",
+      "backend": "mms",
+      "dtype": "float32",
+      "license_metadata": "cc-by-nc-4.0",
+      "source": "https://huggingface.co/facebook/mms-1b-all",
+      "note": "Prior research reference; amh adapter; NC license"
+    },
+    "whisper_amharic_v2": {
+      "model_id": "chappM/whisper-amharic-small-v2",
+      "revision": "ccdfcdbc56ad190b9c41b3c1e0a2a2418bbc86f6",
+      "backend": "whisper",
+      "dtype": "float16",
+      "license_metadata": "openrail",
+      "source": "https://huggingface.co/chappM/whisper-amharic-small-v2",
+      "note": "Public Amharic fine-tune; newer v3/v4 weights listed private"
+    },
+    "ethio_combined": {
+      "model_id": "boazsew/Ethio-ASR-w2v-bert-2.0-combined-am-uf",
+      "revision": "a70b76b095e0043b6c899690a05f6d383b2c95fb",
+      "backend": "ctc",
+      "dtype": "float32",
+      "license_metadata": "cc-by-nc-4.0",
+      "source": "https://huggingface.co/boazsew/Ethio-ASR-w2v-bert-2.0-combined-am-uf",
+      "note": "Additional community Amharic fine-tune; NC license"
+    }
+  },
+  "deferred": [
+    {
+      "model": "facebook/omniASR-CTC-300M / omniASR-CTC-1B",
+      "reason": "Separate fairseq2 environment required; next comparison round, not yet implemented in this bundle.",
+      "source": "https://github.com/facebookresearch/omnilingual-asr"
+    },
+    {
+      "model": "Hohe + bundled 5-gram LM",
+      "reason": "Follow-up decoder experiment after greedy reference passes; pyctcdecode/kenlm setup and LM runtime measured separately.",
+      "source": "https://huggingface.co/snapwre/hohe-asr-amharic"
+    }
+  ]
+}

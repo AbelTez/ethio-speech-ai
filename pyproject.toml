@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ethio-speech-ai"
+version = "0.1.0"
+description = "Self-hosted Amharic speech assistant for organization documents"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+api = ["fastapi==0.142.2", "starlette==1.7.0", "uvicorn==0.54.0", "soundfile>=0.13,<0.15", "numpy>=1.26,<3"]
+api-test = ["httpx==0.28.1"]
+
+[project.scripts]
+amharic-s2s-api = "amharic_s2s.api:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+amharic_s2s = ["web/*.html", "web/*.css", "web/*.js", "web/vendor/*"]

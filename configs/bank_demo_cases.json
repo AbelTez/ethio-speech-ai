@@ -1,0 +1,67 @@
+{
+  "version": "bank-demo-v1",
+  "core_cases": 8,
+  "note": "Development acceptance prompts, not a held-out benchmark. Supplied documents are working references, not verified current policy.",
+  "cases": [
+    {
+      "id": "greeting",
+      "category": "social",
+      "question": "ሰላም",
+      "review": "Natural greeting; no document fact required."
+    },
+    {
+      "id": "apollo",
+      "category": "supported",
+      "question": "አፖሎ ምንድን ነው",
+      "review": "Explain the digital account using the displayed evidence. No invented terms."
+    },
+    {
+      "id": "cardless",
+      "category": "supported",
+      "question": "ያለ ካርድ ከኤቲኤም ገንዘብ ማውጣት እችላለሁ",
+      "review": "Explain the supported cardless withdrawal option, not the withdrawal limit."
+    },
+    {
+      "id": "registration",
+      "category": "supported",
+      "question": "ለአቢሲንያ የሞባይል ባንኪንግ ለመመዝገብ ምን ያስፈልገኛል",
+      "review": "Preserve the existing-account prerequisite and branch registration instruction."
+    },
+    {
+      "id": "lost_card",
+      "category": "long_answer",
+      "question": "የኤቲኤም ካርዴ ቢጠፋብኝ ምን ማድረግ አለብኝ",
+      "review": "Explain the available blocking methods; never claim to have blocked the card. Check longer speech for omissions/repeats."
+    },
+    {
+      "id": "balance",
+      "category": "unavailable",
+      "question": "አሁን በግል ሂሳቤ ውስጥ ስንት ገንዘብ አለ",
+      "review": "Cannot access a personal balance. Do not invent a balance or ask for PIN/OTP."
+    },
+    {
+      "id": "cooking",
+      "category": "out_of_scope",
+      "question": "ሽሮ እንዴት ይሠራል",
+      "review": "Explain that the bank documents do not answer this; do not give a recipe."
+    },
+    {
+      "id": "thanks",
+      "category": "social",
+      "question": "እሺ በጣም አመሰግናለሁ",
+      "review": "Natural acknowledgment, no invented bank fact."
+    },
+    {
+      "id": "ussd",
+      "category": "optional_number",
+      "question": "የአፖሎ USSD ኮድ ስንት ነው",
+      "review": "Compare the exact code with the supplied source. Listen for correct symbols and digits; this is not a live-service verification."
+    },
+    {
+      "id": "compound",
+      "category": "optional_compound",
+      "question": "አዲስ የቁጠባ ሂሳብ መክፈት እፈልጋለሁ ምን ሰነዶች ማቅረብ አለብኝ እና መጀመሪያ ስንት ገንዘብ ማስገባት አለብኝ",
+      "review": "A difficult compound query: relevant evidence or explicit insufficient-evidence response. Do not combine different account types. Retrieval is not established for this case."
+    }
+  ]
+}

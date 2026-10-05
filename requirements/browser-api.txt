@@ -1,0 +1,4 @@
+# HTTP adapter only; model versions remain in pipeline-colab.txt.
+fastapi==0.142.2
+starlette==1.7.0
+uvicorn==0.54.0

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Amharic voice assistant</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script type="module" src="/static/app.js"></script>
+</head>
+<body>
+<main>
+  <header><span class="eyebrow">AMHARIC VOICE ASSISTANT</span><span id="connection" class="badge">Not connected</span></header>
+  <h1 lang="am">ሰላም። <span lang="en">Let’s talk.</span></h1>
+  <p class="intro">Ask a question in Amharic. Read the answer and hear it spoken back.</p>
+  <p id="knowledge-status" class="notice" hidden></p>
+  <aside id="demo" class="notice" hidden><strong>Interface preview · no AI models</strong><br>Replies are fixed examples. Playback is a test tone, not speech. Timings here are not model benchmarks.</aside>
+
+  <section class="card" aria-labelledby="access-title">
+    <h2 id="access-title">Connect</h2>
+    <form id="connect-form" class="row">
+      <label class="grow" for="token">Access key<input id="token" type="password" autocomplete="off" spellcheck="false" required placeholder="Enter your team’s access key"></label>
+      <button id="connect" type="submit">Connect</button>
+      <button id="disconnect" type="button" class="secondary" disabled>Disconnect</button>
+    </form>
+    <p class="hint">Your key stays in this page’s memory and is cleared on disconnect or reload.</p>
+  </section>
+
+  <section class="card" aria-labelledby="question-title">
+    <div class="row spread"><h2 id="question-title">Your question</h2><span id="duration" class="timer">0.0 / 30 s</span></div>
+    <p>Start once, ask your question, then pause. After 800 ms of silence, your question is sent automatically. Listening resumes after the answer.</p>
+    <p id="vad-note" class="hint">Short words are accepted when detected as speech.</p>
+    <meter id="level" min="0" max="1" value="0" aria-label="Microphone level"></meter>
+    <div class="row controls"><button id="start-conversation" disabled>Start conversation</button><button id="reset-history" class="secondary">New topic</button><button id="end-conversation" class="secondary" disabled>End conversation</button></div>
+    <p class="hint">Wait for “Listening” before speaking. Input pauses while the assistant answers.</p>
+    <details id="manual"><summary>Manual recording (diagnostics)</summary>
+    <div class="row controls">
+      <button id="record" disabled>Record</button>
+      <button id="stop" class="secondary" disabled>Stop</button>
+      <button id="send" disabled>Send question</button>
+      <button id="cancel" class="secondary" disabled>Cancel</button>
+    </div>
+    <audio id="preview" controls hidden aria-label="Your recorded question"></audio>
+    </details>
+    <details><summary>Reference information (optional)</summary>
+      <label for="context">Information the answer may use<textarea id="context" maxlength="4096" rows="4" placeholder="For example: a service fee or opening hours."></textarea></label>
+      <label class="check"><input id="grounded" type="checkbox"> Answer only from the reference information</label>
+    </details>
+    <button id="retry" class="secondary" hidden>Check again</button>
+    <p id="status" role="status" aria-live="polite">Connect to begin.</p>
+    <p id="error" class="error" role="alert" hidden></p>
+  </section>
+
+  <section id="response" class="card" aria-labelledby="answer-title" hidden>
+    <div class="row spread"><h2 id="answer-title">Your answer</h2><button id="forget" class="secondary">Clear answer</button></div>
+    <h3>Heard</h3><p id="transcript" lang="am" class="speech"></p>
+    <h3>Answer</h3><p id="answer" lang="am" class="speech answer"></p>
+    <audio id="playback" controls aria-label="Spoken answer"></audio>
+    <p id="playback-note" class="hint"></p>
+    <details><summary>Answer sources</summary><p id="answer-basis" class="hint"></p><pre id="sources" class="speech"></pre></details>
+    <details><summary>Timing</summary>
+      <dl id="timings"></dl>
+      <p class="hint">The under-3-second target is ASR start → TTS start. Browser timing also includes transfer and polling. “Playback started” is the browser’s playing event, not a measurement at the speaker.</p>
+      <p id="compile-note" class="hint"></p>
+    </details>
+  </section>
+  <footer>Recordings and replies are temporary. The server retains up to eight turns for up to ten minutes; Clear answer removes the selected turn. One active question at a time.</footer>
+</main>
+</body>
+</html>

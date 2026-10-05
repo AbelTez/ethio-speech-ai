@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-02",
+  "candidates": {
+    "qwen35_4b": {
+      "model_id": "Qwen/Qwen3.5-4B",
+      "revision": "851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a",
+      "loader": "qwen35_text",
+      "default_preset": "nf4",
+      "enable_thinking": false,
+      "gated": false,
+      "eos_token_ids": [
+        248044
+      ]
+    },
+    "gemma4_e4b": {
+      "model_id": "google/gemma-4-E4B-it",
+      "revision": "ee0ef6023621cff504d758262d4e04895a5af4a2",
+      "loader": "gemma4_text",
+      "default_preset": "nf4",
+      "enable_thinking": false,
+      "gated": false,
+      "eos_token_ids": [
+        1,
+        106,
+        50
+      ]
+    }
+  }
+}

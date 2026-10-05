@@ -1,0 +1,19 @@
+# Generated or machine-specific files
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv*/
+build/
+dist/
+.ipynb_checkpoints/
+.env
+.env.*
+!.env.example
+*.log
+runs/
+results/
+.cache/
+
+# Private handoff assets; included deliberately by scripts/package_colab.py
+data/
+knowledge/

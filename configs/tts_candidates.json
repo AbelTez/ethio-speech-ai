@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-02",
+  "candidates": {
+    "omni_amharic": {
+      "model_id": "gheero-Leyu/amharic-omnivoice-tts",
+      "revision": "f37a337a328927ea0b7b01ac7c509f79c9dcbbb5",
+      "loader": "omni",
+      "license": "apache-2.0",
+      "role": "local synthesis candidate",
+      "default_precision": "float32"
+    },
+    "omni_base": {
+      "model_id": "k2-fsa/OmniVoice",
+      "revision": "c5fdb5ccb189668d56333f77ba2629f4cd7535f4",
+      "loader": "omni",
+      "license": "apache-2.0",
+      "role": "local synthesis candidate",
+      "default_precision": "float32"
+    },
+    "mms_amh": {
+      "model_id": "facebook/mms-tts-amh",
+      "revision": "e366aee5e22a72b9a3333e081ddafb234538d9bb",
+      "loader": "mms",
+      "license": "cc-by-nc-4.0",
+      "role": "evaluation only; non-commercial weights",
+      "default_precision": "float32"
+    }
+  },
+  "codec": {
+    "model_id": "k2-fsa/OmniVoice",
+    "revision": "c5fdb5ccb189668d56333f77ba2629f4cd7535f4",
+    "subfolder": "audio_tokenizer"
+  },
+  "considered_not_runnable": {
+    "addis_voice_2": {
+      "reason": "Public API documented; no downloadable Voice 2 checkpoint/local inference package verified. No cloud call is implemented.",
+      "source": "https://docs.addisassistant.com/voice/text-to-speech"
+    }
+  }
+}
