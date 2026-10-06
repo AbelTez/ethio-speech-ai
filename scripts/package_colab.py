@@ -1,4 +1,4 @@
-"""Build the private team bundle from this repository; no network or GPU needed."""
+"""Build a Colab bundle from source and local data assets; no network or GPU needed."""
 import ast
 import hashlib
 import json
@@ -6,7 +6,7 @@ from pathlib import Path
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-ROOT_FILES = ["README.md", "COLAB_GUIDE.md", "TEAM_GUIDE.md", "ETHIO-SPEECH-AI-DOC.md", "pyproject.toml", ".gitignore"]
+ROOT_FILES = ["README.md", "COLAB_GUIDE.md", "ETHIO-SPEECH-AI-DOC.md", "pyproject.toml", ".gitignore"]
 INVENTORY = {
     "src/amharic_s2s": ["*.py", "web/*", "web/vendor/*"],
     "configs": ["*.json"],

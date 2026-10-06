@@ -14,6 +14,6 @@ runs/
 results/
 .cache/
 
-# Private handoff assets; included deliberately by scripts/package_colab.py
+# Local data assets; included explicitly by scripts/package_colab.py
 data/
 knowledge/

@@ -1,84 +1,125 @@
 # Ethio Speech AI
 
-A self-hosted Amharic voice assistant that answers spoken questions using an
-organization's reference documents, then speaks the answer. This repository is
-the clean team handoff of the tested bank demo.
+A self-hosted Amharic voice assistant that answers spoken questions using reference
+documents and speaks the response. It combines speech recognition, local document
+retrieval, language generation, and speech synthesis in a browser interface backed
+by a Python API.
 
-**Start here:** [Colab setup and feedback guide](COLAB_GUIDE.md). For server setup,
-prerequisites and the HTTP API, read [ETHIO-SPEECH-AI-DOC.md](ETHIO-SPEECH-AI-DOC.md).
+The project provides a practical reference for building document-grounded voice
+assistants for low-resource languages. The implemented pipeline targets Amharic;
+adapting it to another language requires suitable models, language-specific text
+handling, and evaluation by speakers of that language.
 
-## Share and run
+## Features
 
- **`dist/ethio-speech-ai-colab.zip`** and `COLAB_GUIDE.md`.
+- Spoken questions and answers, with automatic end-of-speech detection.
+- Document-grounded responses with source passages available for review.
+- Local inference with models kept loaded on one GPU.
+- A browser interface, HTTP API, and Google Colab notebook.
+- Separate measurements for recognition, retrieval, generation, and synthesis.
+- Reproducible model configurations, package checksums, and CPU/browser tests.
 
-
-1. Extract the ZIP locally and upload `notebooks/ethio_speech_ai_colab.ipynb` to Colab.
-2. Upload the **original ZIP** to your own Drive at
-   `MyDrive/ethio_speech_ai/inputs/ethio-speech-ai-colab.zip`.
-3. Choose a T4 GPU, enable your `HF_TOKEN` Colab secret, and run cells 1–5 in order.
-4. Speak the eight test questions, review answers and audio, then export feedback
-   with cell 6. Run cell 7 and disconnect/delete the runtime when finished.
-
-
-## Selected pipeline
+## How it works
 
 ```text
-Microphone → VAD (800 ms silence) → Hohe ASR → local document search
-           → Gemma 4 E4B / llama.cpp → OmniVoice → spoken answer
+Microphone → voice activity detection → Hohe ASR → local document search
+           → Gemma / llama.cpp → OmniVoice → spoken answer
 ```
 
-| Part | Configuration |
+| Component | Current implementation |
 |---|---|
-| ASR | Hohe Amharic, FP16 |
-| LLM | Gemma 4 E4B instruction model, pinned Q4_K_M GGUF, thinking disabled |
-| TTS | Amharic OmniVoice, 16 steps, selected mixed precision, whole-answer synthesis |
-| Documents | 41 DOCX sources compiled into 1,590 records; CPU lexical retrieval |
-| Interface | Browser microphone and automatic endpointing; FastAPI service |
+| Speech recognition | Hohe Amharic, FP16 |
+| Document retrieval | CPU BM25 and character TF-IDF, with FAQ title weighting |
+| Language generation | Gemma 4 E4B instruction model, pinned Q4_K_M GGUF via llama.cpp |
+| Speech synthesis | Amharic OmniVoice, 16 steps, mixed precision |
+| Service | FastAPI and a browser microphone interface |
 
-Models stay loaded and warm on one GPU. Listening pauses while the assistant
-processes and speaks. The public API receives complete WAV recordings and returns
-complete synthesized WAV responses. It is not a full-duplex streaming API.
+The browser submits a recording after 800 ms of silence and pauses listening while
+the assistant processes and speaks. The API accepts complete WAV recordings and
+returns complete synthesized WAV responses. Model weights are downloaded during
+setup; inference runs on the host.
 
-The latency target measures **ASR decoding start → TTS invocation**. Time until
-the user hears audio is measured separately. Results depend on hardware and input;
-this handoff does not claim a guaranteed response time or complete bank coverage.
+## Getting started
 
-## Repository contents
+### Preview the interface on a CPU
+
+From the repository root, using Python 3.10 or newer:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[api]'
+export AMHARIC_API_TOKEN="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+printenv AMHARIC_API_TOKEN
+python -m amharic_s2s.api --repo . --demo --host 127.0.0.1 --port 8000
+```
+
+Open `http://localhost:8000` and connect using the API token printed in the terminal.
+This preview uses fixed text and a tone; it requires no model weights, document
+index, or warmup recordings.
+
+### Run the speech models
+
+Follow the [setup and API guide](ETHIO-SPEECH-AI-DOC.md) for the GPU service, or the
+[Colab guide](COLAB_GUIDE.md) for the notebook workflow.
+
+The selected GPU setup uses Linux x86-64 with glibc 2.39+, Python 3.13, an NVIDIA
+CUDA GPU, and at least 30 GiB of free disk before provisioning. The pipeline has
+run on a T4 with approximately 15 GiB usable VRAM. You also need Hugging Face model
+access, the pinned dependencies, and local data assets described in the guide.
+
+**A source checkout does not include `data/`, `knowledge/`, or `dist/`.** Warmup
+recordings, the example bank index, and the Colab ZIP are local assets excluded
+from Git. Prepare the required assets before starting the real models or building
+a Colab bundle. The bank documents are an example domain, not a required public
+dataset or a download supplied by this repository.
+
+## Adapt the project
+
+For another document collection, use the DOCX builder and update the domain
+instructions and evaluation questions. See
+[using another corpus](ETHIO-SPEECH-AI-DOC.md#use-another-organization-corpus).
+
+For another low-resource language, review the ASR and TTS backends, language model
+support, retrieval normalization, prompts, and answer checks. Replacing model IDs
+alone is insufficient. The
+[language adaptation guide](ETHIO-SPEECH-AI-DOC.md#adapting-to-other-low-resource-languages)
+identifies the relevant modules and evaluation steps.
+
+## Limitations
+
+- The service handles one inference request at a time on one GPU.
+- Audio is processed by turns; full-duplex streaming and interruption during
+  playback are not implemented.
+- The current context window is 512 tokens, with 128 reserved for the answer.
+  Evidence that cannot fit the input budget results in an insufficient-evidence reply.
+- The example domain is bank reference documents. The assistant cannot access
+  accounts or execute transactions.
+- Recognition, retrieval, answer quality, and speech quality need separate
+  evaluation. Existing pilot observations do not establish broad language coverage
+  or production readiness.
+- The under-three-second target measures ASR decoding start to TTS invocation,
+  not time until audible playback. Hardware and input affect latency.
+
+See the [technical guide](ETHIO-SPEECH-AI-DOC.md) for deployment constraints and
+recorded performance observations.
+
+## Repository structure
 
 | Path | Purpose |
 |---|---|
-| `notebooks/ethio_speech_ai_colab.ipynb` | The one teammate demo notebook |
-| `COLAB_GUIDE.md` | Setup, questions, evaluation, export and troubleshooting |
-| `ETHIO-SPEECH-AI-DOC.md` | Architecture, server installation and API reference |
-| `TEAM_GUIDE.md` | Link to the renamed full team guide |
-| `src/amharic_s2s/` | Runtime, UI, retrieval and required shared helpers |
-| `configs/`, `requirements/` | Pinned model/tool settings and dependencies |
-| `knowledge/bank_v2/` | Prepared bank index and source audit, included in the private ZIP |
-| `data/` | Three fixed startup warmup recordings and their manifest |
+| `ETHIO-SPEECH-AI-DOC.md` | Architecture, prerequisites, GPU setup, API, and adaptation |
+| `COLAB_GUIDE.md` | Notebook setup, evaluation, export, and troubleshooting |
+| `notebooks/ethio_speech_ai_colab.ipynb` | Colab workflow for a prepared bundle |
+| `src/amharic_s2s/` | Runtime, API, browser interface, retrieval, and evaluation helpers |
+| `configs/`, `requirements/` | Model settings and dependency pins |
+| `docs/bank-demo-test-cases.md` | Example domain evaluation questions |
 | `tests/` | CPU contract and browser behavior checks |
-| `scripts/package_colab.py` | Rebuild and verify the handoff ZIP without models or a GPU |
-| `dist/` | The final shareable ZIP and its SHA-256 checksum |
+| `scripts/package_colab.py` | Build and verify a Colab bundle from source and local assets |
 
-Some shared Python modules retain experiment-era names because the selected
-runtime imports their helpers. Their code is preserved from the working demo;
-historical experiment notebooks, reports and patch scripts are omitted.
-The supported entry points are this notebook, the API, document builder and tool
-setup described in `TEAM_GUIDE.md`.
+## Development
 
-## Maintain the package
-
-From this directory:
-
-```bash
-python3 scripts/package_colab.py
-```
-
-Packaging uses an explicit inventory, validates local imports and notebook syntax,
-and includes a per-file `BUNDLE_MANIFEST.json`. The ZIP has files at its root so
-the notebook can extract it directly. It contains no nested ZIP, Git metadata,
-model weights, installed environments, past results or credentials.
-
-Run focused CPU checks after code changes:
+Install the API and test dependencies, then run the existing checks:
 
 ```bash
 python -m pip install -e '.[api,api-test]'
@@ -88,5 +129,30 @@ node tests/test_endpoint.mjs
 node tests/test_capture.mjs
 ```
 
-These checks do not establish GPU performance or Amharic speech quality. 
+Browser checks require Node.js. These tests exercise contracts and behavior without
+loading GPU models; they do not establish speech quality or model performance.
 
+To build a Colab ZIP after preparing the local assets:
+
+```bash
+python3 scripts/package_colab.py
+```
+
+The packager validates imports, notebook syntax, and audio checksums, then writes
+`dist/ethio-speech-ai-colab.zip` and its SHA-256 checksum. The ZIP contains an
+explicit file inventory and a per-file `BUNDLE_MANIFEST.json`; model weights,
+environments, credentials, and previous results are excluded.
+
+## Contributing
+
+Issues and focused pull requests are welcome. Include reproduction steps for bugs
+and relevant tests for behavior changes. For model or language changes, record the
+hardware, model revisions, configuration, and recognition/answer/listening results.
+Describe known limitations alongside improvements.
+
+## License and attribution
+
+A project license has not yet been selected. Third-party components retain their
+own licenses; notices for bundled browser dependencies are in
+[`src/amharic_s2s/web/vendor/`](src/amharic_s2s/web/vendor/). Model weights are
+obtained separately and remain subject to their respective terms.

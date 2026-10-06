@@ -1,4 +1,4 @@
-# Amharic Speech Assistant Setup and API Guide
+# Ethio Speech AI: Setup and API Guide
 
 A self-hosted Amharic voice assistant for organization documents. A client sends a
 spoken question and receives the recognized text, an answer, supporting document
@@ -6,10 +6,10 @@ passages and a WAV response. ASR, retrieval, language generation and speech
 synthesis run on the host; no external inference API is required.
 
 This guide describes the implemented single-GPU service and its HTTP contract.
-It is intended for teammates integrating the API and contributors adapting it to
-another organization. The current bank corpus is an example deployment, not a
-required public dataset. Host deployment and wider answer coverage still need
-acceptance on the target server.
+It is intended for developers running the service, integrating the API, or adapting
+the pipeline to another domain or low-resource language. The current bank corpus
+is an example deployment, not a dataset distributed with the source code. Validate
+deployment and answer coverage on the target server with your own documents.
 
 ## Architecture
 
@@ -33,7 +33,7 @@ checked answer is synthesized before its WAV becomes available. Thinking is off.
 
 ## Documents and storage
 
-The current corpus contains **41 DOCX sources**, represented by **675 FAQ records
+The example bank corpus contains **41 DOCX sources**, represented by **675 FAQ records
 and 915 section records**. Each record retains its source filename, document hash
 and extracted block range. The serving JSON is about **2 MiB**. Search structures
 are built once in CPU memory at startup; each question sends only the complete top
@@ -76,9 +76,11 @@ Two different secrets are used:
 
 ## Set up the GPU service
 
-Run commands from the repository root. The private handoff bundle includes data
-assets; a source checkout alone may not, because `data/` and `knowledge/` are
-ignored by Git. Required warmup files are:
+Run commands from the repository root. A source checkout excludes `data/`,
+`knowledge/`, and generated `dist/` bundles. Supply local warmup recordings and
+build an index from your own documents before starting the GPU service. A Colab
+bundle must include these assets when it is built; the notebook does not create
+them. The existing packaging inventory expects these warmup files:
 
 ```text
 data/pipeline_public/questions_v2.json
@@ -86,6 +88,39 @@ data/pipeline_v2_audio/everyday.wav
 data/pipeline_v2_audio/fee.wav
 data/pipeline_v2_audio/unknown.wav
 ```
+
+The runtime reads a `samples` array from `questions_v2.json`. Each entry needs
+`audio_file` (a filename under `data/pipeline_v2_audio/`) and `context` (a string;
+empty for an ungrounded request). For example, after recording your own three
+short, audible Amharic questions, a manifest can use this structure:
+
+```json
+{
+  "samples": [
+    {"audio_file": "everyday.wav", "context": ""},
+    {"audio_file": "fee.wav", "context": "<Amharic reference text answering the recorded fee question>"},
+    {"audio_file": "unknown.wav", "context": "<Amharic reference text that omits the requested fact>"}
+  ]
+}
+```
+
+Replace the example context strings with actual reference text. Use mono or stereo
+WAV recordings, 1–30 seconds long, at 8–96 kHz. Warmup runs each sample twice and
+must pass the same answer checks used during inference.
+
+For packaging, also create `data/pipeline_v2_audio/MANIFEST.json` as a JSON object
+mapping each WAV filename to its SHA-256 hex digest. The packager verifies these
+digests. Its document inventory expects `bank_index.json`, `source_audit.json`,
+`build_report.json`, and `retrieval_preview.json` under `knowledge/bank_v2/`.
+The DOCX builder produces the first three; the retrieval preview is a separate
+evaluation artifact produced with:
+
+```bash
+python -m amharic_s2s.bank_pilot --repo . --output knowledge/bank_v2/retrieval_preview.json
+```
+
+That evaluation uses the bank demo cases, so adapt the cases and notebook paths when using another
+corpus. See [Use another organization corpus](#use-another-organization-corpus).
 
 ### Install the environment
 
@@ -104,15 +139,15 @@ python -c "import torch, torchaudio; print(torch.__version__, torchaudio.__versi
 ```
 
 The CUDA wheel command follows the [official PyTorch version instructions](https://pytorch.org/get-started/previous-versions/).
-The OmniVoice install follows our pinned headless runtime rather than installing
+The OmniVoice install follows the pinned headless runtime rather than installing
 its separate Gradio application. Keep these versions together; `pip install -e .`
 alone does not install the model dependencies. This server recipe follows the
-working Colab setup but has not been executed on the organization's host.
+working Colab setup; deployment on a separate server still requires validation.
 
 ### Configure and provision
 
-Supply `HF_TOKEN` from your team's secret store. Generate a separate API secret
-and configure the **same value** in the server and clients; do not commit it.
+Supply `HF_TOKEN` through your environment or a secret manager. Generate a separate
+API secret and configure the **same value** in the server and clients; do not commit it.
 The example below generates one for this shell:
 
 ```bash
@@ -144,7 +179,7 @@ text and a tone, and displays a preview banner; it does not exercise the models.
 
 ### Colab alternative
 
-Follow [COLAB_GUIDE.md](COLAB_GUIDE.md) for the complete teammate workflow.
+Follow [COLAB_GUIDE.md](COLAB_GUIDE.md) for notebook setup and evaluation.
 
 Upload `dist/ethio-speech-ai-colab.zip` to
 `MyDrive/ethio_speech_ai/inputs/`, open
@@ -341,6 +376,27 @@ then restart the service to load it. There is no live index reload. Adapt the ba
 instruction, social responses and test cases in `knowledge.py` and
 `configs/bank_demo_cases.json` when serving a different domain. Test relevant,
 unsupported and compound questions against the displayed evidence.
+
+## Adapting to other low-resource languages
+
+The current implementation is Amharic-specific. Its separation of recognition,
+retrieval, generation, and synthesis can serve as a starting point for another
+language, but changing configuration values alone does not establish support.
+
+| Area | Adaptation work |
+|---|---|
+| Recognition | Select an ASR model for the language; update `configs/asr_candidates.json` and the loading/transcription code in `runtime_cpp.py` and `pipeline_backend.py` if its architecture differs from Hohe CTC. |
+| Generation | Choose a model with adequate language support; update model pins, tokenizer handling, llama.cpp settings, and context budgets together. |
+| Synthesis | Select a suitable voice/model and adapt `tts_backend.py`, `pipeline_v3.py`, and `configs/tts_candidates.json` to its inference contract. |
+| Text and retrieval | Review normalization and matching in `bank_search.py` and `knowledge.py`, and speech preparation in `tts_text.py`. |
+| Prompts and answer checks | Translate and evaluate `configs/runtime_instructions.json`, domain instructions and social responses in `knowledge.py`, and checks in `answer_quality.py`, `llm_backend.py`, and `pipeline_core.py`, including Ethiopic-script assumptions. |
+| Evaluation | Replace warmup recordings and domain test cases; assess transcripts, retrieved evidence, answers, pronunciation, and timings separately. |
+
+Start with a small document collection and recorded questions reviewed by fluent
+speakers. Include unsupported questions, numbers, names, varied accents, and noisy
+audio. Measure performance on the intended hardware and record model revisions
+and settings. Document quality gaps before expanding the use case; the Amharic
+pilot results below do not establish results for another language.
 
 ## Deployment and contribution
 

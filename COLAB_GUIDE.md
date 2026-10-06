@@ -1,9 +1,16 @@
 # Run Ethio Speech AI on your own Colab
 
-You need the single **`ethio-speech-ai-colab.zip`**. It contains
-the notebook, bank reference index, three startup recordings, source code and
-guides. Model weights download during setup/startup. No previous result ZIP,
-patch script or separate document upload is needed.
+This workflow requires a prepared **`ethio-speech-ai-colab.zip`** containing
+the notebook, document index, three startup recordings, source code, and guides.
+Model weights download during setup/startup.
+
+**The ZIP and data assets are not included in a Git checkout.** Prepare the assets
+listed in the [setup guide](ETHIO-SPEECH-AI-DOC.md#set-up-the-gpu-service), then run
+`python3 scripts/package_colab.py` from the repository root to create
+`dist/ethio-speech-ai-colab.zip`. The packager requires every file in its inventory
+and fails if an asset is missing. The instructions and questions below describe
+the example bank corpus; adapt the domain cases and readiness expectations for
+your own index.
 
 ## 1. Prepare your files and accounts
 
@@ -49,7 +56,8 @@ silently claiming readiness.
 
 The interface access key is filled automatically. If the interface asks you to
 click **Connect**, do so. This uses a generated API key, **not your HF_TOKEN**.
-Wait for **Ready** and **Bank document search ready · 41 source files** before
+Wait for **Ready** and **Bank document search ready · 41 source files** (for the
+example corpus; the count depends on your index) before
 starting a conversation. This should be the real model interface, not the yellow
 “Interface preview · no AI models” banner.
 
@@ -95,7 +103,7 @@ An insufficient-evidence reply is appropriate for unknown facts; if it occurs fo
 a supported question, record it as a retrieval/budget limitation, not a correct
 answer to that question. The full top passage must fit a 384-token input budget.
 
-## 4. Save your feedback and send it to Abel
+## 4. Export results and evaluation notes
 
 1. Click **End conversation** and wait for any active answer to finish.
 2. In cell 6, edit the text **inside the triple quotes** assigned to `QUALITY_NOTES`.
@@ -113,14 +121,14 @@ answer to that question. The full top passage must fit a 384-token input budget.
    MyDrive/ethio_speech_ai/results/<your-name>/bank-demo-<timestamp>-<id>.zip
    ```
 
-
 4. Run cell 7. Then choose **Runtime → Disconnect and delete runtime** to release
    the GPU. Closing the browser tab alone is not the cleanup step.
 
 The export contains recognized text, answers, available generated audio, retrieved
 passages, timings, logs, your notes and package identification. It excludes raw
-microphone uploads and intentionally does not export credentials. The included
-bank passages and conversation .
+microphone uploads and intentionally does not export credentials. Results include
+document passages and conversation text; review those contents before sharing an
+export with a bug report or evaluation.
 
 ## 5. Troubleshooting
 
@@ -138,4 +146,5 @@ bank passages and conversation .
 | ZIP download blocked | Retrieve the printed result ZIP from your Drive manually before stopping the session. |
 | Colab quota exhausted/session deleted | Saved result ZIPs remain in Drive. Model processes and local caches do not; a later session starts again from cell 1. |
 
-For organizational server deployment or API integration, use `TEAM_GUIDE.md`.
+For GPU server deployment or API integration, use the
+[setup and API guide](ETHIO-SPEECH-AI-DOC.md).

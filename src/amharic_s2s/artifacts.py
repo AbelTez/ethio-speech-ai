@@ -129,7 +129,7 @@ def prepare_run(repo, config_path, manifest_path, data_root, output_root, owner,
             changed = [k for k in identity if previous["identity"].get(k) != identity[k]]
             raise ValueError(f"Cannot resume: changed {', '.join(changed)}. Create a new run for this environment/configuration.")
         if previous["owner"] != owner:
-            raise ValueError("A run has one owner. Use the recorded owner only after an explicit team handoff.")
+            raise ValueError("Cannot resume a run owned by another user. Create a new run with your own owner name.")
     else:
         run_id = f"{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}-{owner}-{uuid4().hex[:8]}"
         directory = Path(output_root) / run_id
