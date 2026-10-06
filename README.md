@@ -9,8 +9,8 @@ prerequisites and the HTTP API, read [ETHIO-SPEECH-AI-DOC.md](ETHIO-SPEECH-AI-DO
 
 ## Share and run
 
-Send teammates **`dist/ethio-speech-ai-colab.zip`** and `COLAB_GUIDE.md`.
-The ZIP also contains both guides and the notebook.
+ **`dist/ethio-speech-ai-colab.zip`** and `COLAB_GUIDE.md`.
+
 
 1. Extract the ZIP locally and upload `notebooks/ethio_speech_ai_colab.ipynb` to Colab.
 2. Upload the **original ZIP** to your own Drive at
@@ -19,8 +19,6 @@ The ZIP also contains both guides and the notebook.
 4. Speak the eight test questions, review answers and audio, then export feedback
    with cell 6. Run cell 7 and disconnect/delete the runtime when finished.
 
-Each tester supplies their own name in cell 1. Results go to their own Drive under
-`ethio_speech_ai/results/<tester>/`. Previous experiments or recordings are not needed.
 
 ## Selected pipeline
 
@@ -90,18 +88,5 @@ node tests/test_endpoint.mjs
 node tests/test_capture.mjs
 ```
 
-These checks do not establish GPU performance or Amharic speech quality. Review
-the team's exported audio and answers before changing the selected configuration.
+These checks do not establish GPU performance or Amharic speech quality. 
 
-## Sharing and contribution
-
-This is currently a **private team handoff** containing bank reference text and
-warmup recordings. Those assets and the final ZIP are ignored by Git but included
-in the local distribution. A Git clone alone needs the private package assets.
-Do not assume these materials are cleared for public redistribution.
-
-Before an open-source release, choose a project license and replace or obtain
-redistribution permission for the bank documents and recordings. Model weights
-are downloaded separately under their own terms. Vendored VAD/ONNX notices remain
-in `src/amharic_s2s/web/vendor/`. Submit focused contributions with tests and, for
-model changes, recorded answer quality, listening feedback and hardware details.
